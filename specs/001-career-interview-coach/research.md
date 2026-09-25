@@ -67,7 +67,7 @@ The repository was inspected directly. Earlier discovery notes are historical; t
 
 ## R7 — Manual-turn recording and playback
 
-**Decision**: Use getUserMedia/MediaRecorder over HTTPS. Reserve server recording ID/time before capture; keep the active answer in memory, upload on explicit Done, and recover only acknowledged saved data. Select MIME types by feature detection. Silence and OS capture-stop events do not submit. Text continuation is always available.
+**Decision**: Use getUserMedia/MediaRecorder over HTTPS. Reserve server recording ID/time before capture; keep the active answer in memory, upload on explicit Done, and recover only acknowledged saved data. Select MIME types by feature detection. Silence and OS capture-stop events do not submit. Text continuation is always available. Under the owner-approved 2026-09-25 FR-027 boundary, unsaved buffers have no persistent cache: clear on upload acknowledgement, cancellation, page teardown or active expiry, and clear expired buffers before any audio action on resume. Disclose before capture that memory clearing during browser/device suspension is not guaranteed; actual-device qualification verifies these observable controls.
 
 **Rationale**: [getUserMedia](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia) requires a secure context and permission. [MediaRecorder dataavailable](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/dataavailable_event) timing can vary with browser/device state, so chunk count is not a clock. [isTypeSupported](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/isTypeSupported_static) is a capability test, not a guarantee of successful capture.
 
@@ -77,7 +77,7 @@ The repository was inspected directly. Earlier discovery notes are historical; t
 
 ## R8 — Retention and recovery
 
-**Decision**: Fixed server creation time and hard deadline; independently supervised cleanup; read/upload/dispatch/keep guards; no temporary audio in backups, logs or generated exports. Keep choice and deletion are serialized. Distinguish access revocation, deletion pending, failed and verified deletion. Transcoding temporary files and external copies belong to the same lifecycle.
+**Decision**: For stored server/provider recording copies, fixed server creation time and hard deadline; independently supervised cleanup; read/upload/dispatch/keep guards; no temporary audio in backups, logs or generated exports. Keep choice and deletion are serialized. Distinguish access revocation, deletion pending, failed and verified deletion. Transcoding temporary files and external copies belong to the same lifecycle.
 
 **Rationale**: An hourly timer or a request-time expiry flag cannot prove physical removal by 24 hours. Cleanup should schedule ahead of deadlines with retry margin; service startup reconciles pending deletions before serving data. A stopped host cannot unlink files: qualify continuously running monitored hosting and report actual failure rather than claiming success. If a proposed deployment cannot meet FR-027, reject that deployment or seek an explicit spec change; never silently weaken expiry.
 
@@ -93,4 +93,4 @@ The repository was inspected directly. Earlier discovery notes are historical; t
 
 Figma screenshot/metadata calls for the approved file returned the Starter-plan MCP tool limit; browser search access also failed. The repository explicitly permits nonvisual planning from the spec and UX addendum. No visual parity claim is made. Exact screen review remains required before UI acceptance.
 
-Source research supports Phase 1 under the narrow personal-use interpretation above. The architecture decisions are settled for plan review; no unresolved product clarification is hidden. Remaining qualification work is explicit: deployment/cleanup, concrete generation/STT configuration, real device voice behavior, Figma review and longitudinal outcomes. None may be treated as already passed by later tasks or implementation.
+Historical Phase 0 conclusion: source research supported Phase 1 under the narrow personal-use interpretation above; deployment/cleanup, concrete generation/STT configuration, real device voice behavior, Figma review and longitudinal outcomes remained unqualified. The subsequent owner decision and consistency-remediation record in plan.md resolve C1 by distinguishing hard stored-copy deletion deadlines from disclosed memory-only browser cleanup and expiry-on-resume controls. This closes the documentation blocker without qualifying a deployment or authorizing implementation. None of the live gates may be treated as already passed by later tasks or implementation.

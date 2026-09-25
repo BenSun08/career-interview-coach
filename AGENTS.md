@@ -2,7 +2,7 @@
 
 ## Read before implementation
 
-- Read `.specify/memory/constitution.md` and `specs/001-career-interview-coach/spec.md`; use the adjacent `checklists/requirements.md` to check spec readiness. The canonical Spec Kit `plan.md`, `research.md`, `data-model.md`, `contracts/`, and `quickstart.md` now contain the proposed technical design. Review that plan before generating `tasks.md`; no implementation tasks or application code exist yet. Do not create a competing plan outside Spec Kit.
+- Read `.specify/memory/constitution.md` and `specs/001-career-interview-coach/spec.md`; use the adjacent `checklists/requirements.md` and reviewer-owned `checklists/behavior-quality.md` to check readiness. The canonical Spec Kit `plan.md`, `research.md`, `data-model.md`, `contracts/`, and `quickstart.md` contain the technical design, and `tasks.md` contains 121 unimplemented tasks. Read the plan's consistency-remediation record before implementation. No application code exists. Do not create a competing plan outside Spec Kit.
 - Read `specs/001-career-interview-coach/prototype.md` and `ux-addendum.md` before planning screens or implementing UI. The former links to the approved Figma prototype and its key frames. The specification defines product behavior; the prototype is the approved UX reference and does not add requirements by itself. Record and resolve any conflict before implementation.
 
 ## Architecture and scope
@@ -19,5 +19,5 @@
 
 ## Git and completion
 
-- Git was reverified on 2026-09-25: this directory is on `main`, with initial commit `f678297` and planning corrections in the working tree. Spec Kit's `001-career-interview-coach` feature identifier is not a created Git branch. Reverify state before Git operations; do not initialize, create branches, commit, push, or open a PR without task-specific authorization.
+- Git was reverified on 2026-09-25 before consistency remediation: this directory was clean on `main` at `16760b0`. The earlier `f678297` observation was historical. Spec Kit's `001-career-interview-coach` feature identifier is not a created Git branch. Reverify state before Git operations; do not initialize, create branches, commit, push, or open a PR without task-specific authorization.
 - Follow the repository's spec → plan → tasks → implement review gates. Finish with a review of the changed files, fresh verification of affected behavior, updated contract documentation where needed, and a clear report of checks run and remaining limits.

@@ -1,8 +1,8 @@
 # Implementation Plan: Career Direction and Interview Growth Coach
 
-**Git branch**: `main` | **Observed HEAD**: `f678297` | **Spec Kit feature**: `001-career-interview-coach` | **Date**: 2026-09-25 | **Spec**: [spec.md](./spec.md)
+**Git branch**: `main` | **Observed HEAD before remediation**: `16760b0` | **Spec Kit feature**: `001-career-interview-coach` | **Date**: 2026-09-25 | **Spec**: [spec.md](./spec.md)
 
-**Status**: Technical design proposed for review. Planning only; tasks and implementation are not authorized by this document.
+**Status**: Plan used for approved task generation; approved documentation-only consistency remediation complete. Application implementation remains separately gated.
 
 **Input**: Approved [specification](./spec.md), [constitution v1.1.0](../../.specify/memory/constitution.md), [prototype index](./prototype.md), [UX addendum](./ux-addendum.md), and completed [requirements checklist](./checklists/requirements.md).
 
@@ -12,7 +12,7 @@ Deliver the complete first usable release for one authenticated owner: verify im
 
 Use one Django application with server-rendered screens, focused browser modules, SQLite, private files, and supervised processing/retention commands. Core decisions remain pure Python functions; application services own transactions, authorization, and effects. No application code, package manifest, separate approved technical architecture, persisted application data, or published API was found. This proposes the initial technical stack while preserving the repository's approved behavioral and data boundaries. If another approved architecture is supplied, reconcile it here before implementation.
 
-This is the sole implementation plan. Research, data model, contracts, and validation guide support it. Stop after Spec Kit Phase 1 and plan review; do not create another plan or generate `tasks.md` in this command.
+This is the sole implementation plan. Research, data model, contracts, and validation guide support it. Its original planning invocation stopped after Spec Kit Phase 1; subsequent authorized task generation produced [tasks.md](./tasks.md). The current remediation edits these artifacts without creating another plan or implementing application code.
 
 ## Technical Context
 
@@ -25,7 +25,7 @@ This is the sole implementation plan. Research, data model, contracts, and valid
 | Platform | Continuously running Linux host with HTTPS and persistent disk; macOS/Linux development. Desktop Chrome/Edge/Safari and physical mobile Safari/Chrome acceptance. |
 | Project type | Single-owner responsive web application; same codebase for web, bounded job worker, and independent retention command. No native app or general offline replica. |
 | Performance goals | SC-006: saved phone changes visible on connected active desktop within 60 seconds; visible-tab polling every 10 seconds and immediate focus/reconnect refresh. SC-003: timed resume-plus-plan flow within 15 minutes. No invented model latency SLA. |
-| Constraints | Owner-only access; immutable provenance; explicit conflicts; manual Done submission; processing choices; recording deletion at earlier of transcript-and-review completion or creation plus 24 hours. |
+| Constraints | Owner-only access; immutable provenance; explicit conflicts; manual Done submission; processing choices; stored server/provider recording deletion at earlier of transcript-and-review completion or creation plus 24 hours; memory-only browser cleanup and disclosed suspension limits per FR-027. |
 | Scale/scope | One owner, two primary devices; six stories, 35 FRs, 12 SCs; at least nine directions across automotive, robotics/embodied intelligence, and AI. Three acceptance profiles are isolated fixtures, not multi-user support. |
 
 The selected job adapter is the public Greenhouse Job Board API for Canonical's published vacancies, limited to this owner's private personal use with attribution/notices. The permitted scope, live evidence and limitations are in [research.md](./research.md). Text-generation and STT deployment configurations must pass the qualification contract before live enablement; a fake adapter is test infrastructure, not a release substitute. This plan fixes their narrow interfaces without promising an unverified vendor/model, price, hosting region, or data-retention policy.
@@ -36,12 +36,12 @@ The selected job adapter is the public Greenhouse Job Board API for Canonical's 
 | --- | --- | --- |
 | I. Minimal architecture/scope | PASS | PASS: one app, local DB, bounded effects, no agent framework/Redis/vector store; worker is justified by recovery/expiry. Deferred capabilities are excluded. |
 | II. Data integrity | PASS | PASS: immutable revisions, source spans, explicit conflicts, dependency invalidation, current-fact guards and reviewed clauses. |
-| III. Security/privacy | PASS subject to source research | PASS at design level: researched private source use; owner gate; consent; safe imports; retention/deletion contract. Hosting/provider qualification remains a live-enablement gate. |
+| III. Security/privacy | PASS subject to source research | PASS at design review: owner-approved FR-027 distinguishes strict stored-copy deadlines from memory-only browser cleanup, expiry-before-action on resume and pre-capture suspension disclosure. Owner gate, consent, safe imports and hosting/provider deletion qualification remain mandatory. |
 | IV. Testability/verification | PASS | PASS: controllable effects and clocks; offline boundary tests; real-device/live/longitudinal evidence separated. |
 | V. Compatibility | PASS; no legacy application data | PASS: initial schema, versioned exports/API, migration/restore tests and deletion reconciliation. |
 | VI. Clear code/documentation | PASS | PASS: module owners, FR/SC coverage and precise interfaces; future canonical checks listed as planned, not executed. |
 
-No constitution waiver or amendment is proposed. A deployment/provider that cannot meet the contracts fails its gate. Research identifies no unresolved product-behavior clarification. Infrastructure credentials, provider qualification and physical-device evidence are implementation/release dependencies, not claims of completed integration.
+No constitution waiver or amendment is proposed. A deployment/provider that cannot meet the contracts fails its gate. The owner explicitly selected the recommended C1 boundary on 2026-09-25; spec FR-027, lifecycle controls and task/device acceptance now agree. This changes the browser-memory promise explicitly, without waiving service/provider deletion or amending the constitution. Infrastructure credentials, provider qualification and physical-device evidence are separate implementation/release dependencies, not claims of completed integration.
 
 ## Project Structure
 
@@ -49,7 +49,7 @@ No constitution waiver or amendment is proposed. A deployment/provider that cann
 
 ```text
 specs/001-career-interview-coach/
-├── spec.md                     # Approved behavior, unchanged
+├── spec.md                     # Behavioral authority
 ├── prototype.md                # Approved UX reference
 ├── ux-addendum.md
 ├── checklists/requirements.md
@@ -60,10 +60,11 @@ specs/001-career-interview-coach/
 │   ├── application-api.md
 │   ├── external-services.md
 │   └── interaction-lifecycle.md
-└── quickstart.md               # Future validation/run guide
+├── quickstart.md               # Future validation/run guide
+└── tasks.md                    # Canonical task breakdown
 ```
 
-`tasks.md` is a later `$speckit-tasks` output, deliberately absent.
+`tasks.md` exists with 121 unchecked tasks. Its existence and documentation remediation do not imply implementation approval or completed application behavior.
 
 ### Proposed source code (not created by planning)
 
@@ -131,6 +132,8 @@ tests/
 6. Keep/delete is serialized; expiry, user deletion and completed transcript-plus-review can trigger purge. Reject late uploads and retries for expired/deleted IDs. Cleanup runs independently of slow provider jobs.
 7. Direction assessments use a versioned nine-or-more-direction catalog with explicit skill requirements and preparation stages. Expose matched claim IDs, gaps and unknowns. Plans use a deterministic score from requirement relevance, gap and interview horizon, with stable ID tie-breaks; preserve manual order overrides and completed records. Default horizon is one calendar month in the user's timezone, clamped at month end.
 
+The spec's Acceptance Interpretations and Input Boundaries supplies the qualitative stage decision table, applicable-question rule, active-plan date/availability rules, optional 0–10 tension self-report and empty-flow entry actions. Catalog requirements identify essential versus supporting requirements and the knowledge/practice/experience/credential kind; assessment tests cover every stage branch, interest-only evidence and essential unknowns. This is advisory classification with visible reasons, not a calibrated probability or a promised preparation duration. Finite technical text/body limits are disclosed and documented by T020 before dependent work; they must reject explicitly without truncation.
+
 ## Requirement-to-Work Mapping
 
 W1–W8 are implementation work packages, not a second task list. Q1–Q12 refer to [quickstart.md](./quickstart.md).
@@ -186,7 +189,7 @@ W1–W8 are implementation work packages, not a second task list. Q1–Q12 refer
 | W7 Sync/privacy completion | W2–W6 | Integrated conflicts, retention, exports/deletions and restore safety. Q10–Q12; W1 security is not postponed. |
 | W8 Release validation | W1–W7 | Regression/accessibility/visual review, live qualifications, timed usability and four-week outcome evidence. |
 
-Each package begins with relevant invariant and boundary tests, then application outcomes and UI integration. Fixtures keep core development independent of paid or unavailable services. Live service qualification remains mandatory for required release capabilities. This sequence authorizes neither implementation now nor omission of a later package.
+Each package begins with relevant invariant and boundary test authoring, then application outcomes and UI integration. Executable RED may require the implementation task's minimal importable interface or unconstrained schema; it must precede the rule or constraint being implemented. The task list distinguishes authored-but-not-runnable cases from observed behavioral failures, and requires RED-to-GREEN evidence at the owning implementation task. Fixtures keep core development independent of paid or unavailable services. Live service qualification remains mandatory for required release capabilities. This sequence authorizes neither implementation now nor omission of a later package.
 
 ## Interfaces and Contracts
 
@@ -224,10 +227,10 @@ Future canonical commands and Q1–Q12 are in [quickstart.md](./quickstart.md). 
 
 ## Migrations and Compatibility
 
-- **Baseline**: no legacy application data/API exists. The approved spec's old non-Git header is historical metadata: Git was initially observed as unborn `main`, then reverified at initial commit `f678297` during this session. That commit was created outside this planning agent's actions. No feature branch, commit, push or PR was created by this workflow; final corrections remain in the working tree.
-- **Initial schema**: reviewed Django migrations cover owner binding, provenance/revisions/conflicts, dependencies, targets/jobs, resumes/plans, materials/interviews/reviews/methods, jobs/grants/retention. Seed catalog separately; never seed personal facts or prototype vacancies as real records.
+- **Baseline**: no legacy application data/API exists. Earlier observations of unborn `main` and initial commit `f678297` describe planning history. The clean checkout was reverified at `16760b0` before this documentation remediation. No feature branch, commit, push or PR is part of this remediation.
+- **Initial schema**: reviewed Django migrations cover owner binding, provenance/revisions/conflicts, dependencies, targets/jobs, resumes/plans, materials/interviews/reviews/methods, jobs/grants/retention. T010 explicitly owns `EvidenceReference` and `ReviewRequirement` in `models/core.py` / `0001_core.py`; T030 owns their application logic. T037 owns original-link report history in `0006_listings.py`. Seed catalog separately; never seed personal facts or prototype vacancies as real records.
 - **Later migrations**: maintenance mode, paused web writers/workers, policy-compliant backup, migrate a copy, verify IDs/order/content/provenance/review flags, then apply. Test populated prior-schema fixtures and rollback/recovery. Refuse newer unsupported schema. SQLite table rebuilds require measured maintenance time.
-- **Exports**: versioned manifest/checksums, all selected content/revisions/provenance/known conflicts/review flags, original imports and retained audio. Viewing/exporting history does not certify current validity. No generic archive-import feature; operator restore validates schema, then applies deletion tombstones and expiry before service resumes.
+- **Exports**: versioned manifest/checksums, all selected content/revisions/provenance/known conflicts/review flags, original imports and retained audio. Viewing/exporting history does not certify current validity. No generic archive-import feature; operator restore uses the intact current installation's deletion authority and registered-copy inventory, never the candidate snapshot as authority. Migrate and reconcile a separate staged candidate before replacement; missing authority, ineligible copies or interrupted reconciliation keep private serving disabled. Preserve current generations/tombstones, cancel replayable jobs and invalidate sessions/cursors. See Data model Restore authority; archive-only disaster recovery is outside this first-release guarantee.
 - **Deletion wins over history**: purge selected sensitive payloads and annotate retained dependants as evidence unavailable. Keep minimal content-free tombstones to reject old writes. Exclude temporary audio from backups/exports. Backups and generated archives are registered copies subject to deletion/retention, not a way to retain deleted content forever.
 - **Clients**: stale revision/contract errors are explicit; no silent field discard or last-writer-wins. Display reload/reconcile guidance.
 
@@ -239,7 +242,7 @@ Future canonical commands and Q1–Q12 are in [quickstart.md](./quickstart.md). 
 | No approved stack document located | Preserve approved behavior; review the initial stack here. Additional architecture must be reconciled in this plan. |
 | Figma quota | MCP returned Starter-plan call limit; web access failed. Nonvisual planning is allowed by prototype.md. Screen fidelity/interaction review remains pending before UI acceptance. |
 | Generation/STT configuration | Implement finite ports with fixtures, then qualify concrete provider or local service for availability, Chinese quality, allowed processing, formats and deletion. No silent vendor fallback; dependent features and first-release acceptance remain gated until live evidence exists. |
-| Strict 24-hour audio deletion | Trusted reservation time, deadline checks, independent cleanup and no temp backups. Stopped hardware cannot prove timely physical deletion; qualify monitored hosting/cleanup and disclose any failure. Do not equate inaccessible with physically removed. |
+| Strict stored-copy audio deletion and browser cleanup | Trusted reservation time, deadline checks, independent service/provider cleanup and no temp backups. Stopped server hardware cannot prove timely physical deletion; qualify monitored hosting/cleanup and record any failure. Unsaved browser buffers follow the owner-approved cleanup/resume rule and pre-capture suspension disclosure. Do not equate inaccessible service/provider bytes with physical removal. |
 | SQLite contention | Short IMMEDIATE transactions/CAS, finite retries, unique operation IDs; test two devices plus worker. Scale only after measured failure or approved deployment change. |
 | Import fidelity/exhaustion | Bounded parser subprocess; explicit partial/unreadable diagnostics and manual entry. No OCR/layout-fidelity promise. |
 | Semantic hallucination | Clause-level references and user review; reject unknown IDs/new unsupported facts. A valid citation ID alone is not proof of semantic support. |
@@ -250,4 +253,24 @@ Future canonical commands and Q1–Q12 are in [quickstart.md](./quickstart.md). 
 
 Pre-plan and post-plan extension checks: `.specify/extensions.yml` absent; no hooks registered to dispatch. Setup used the existing feature directory and persisted `.specify/feature.json`; its `BRANCH` value is the feature identifier, not Git branch creation. Research and Phase 1 outputs remain within Spec Kit. There are no justified constitution violations to list under Complexity Tracking.
 
-Document verification on 2026-09-25: Spec Kit prerequisite discovery succeeds; all 35 FRs and 12 SCs have explicit table rows; Q1–Q12 exist; seven generated design documents have valid local links, balanced code fences and no template placeholders/trailing whitespace. Hash comparison confirms the specification, constitution, prototype index, UX addendum and requirements checklist are unchanged. A design review identified browser-buffer expiry, provider qualification sequencing and missing material revisions; all three were corrected. No `tasks.md`, application scaffold, dependency installation or application test execution occurred. These checks establish planning artifact consistency, not application behavior or live release readiness.
+Historical verification from the original planning invocation on 2026-09-25: Spec Kit prerequisite discovery succeeded; all 35 FRs and 12 SCs had explicit table rows; Q1–Q12 existed; seven generated design documents passed local link/fence/placeholder checks. The specification, constitution, prototype index, UX addendum and requirements checklist were unchanged in that invocation; no tasks or application code were generated then. Later task generation and the consistency remediation below supersede that artifact inventory. None of these document checks establishes application behavior or live release readiness.
+
+## Consistency Remediation — 2026-09-25
+
+The user approved documentation remediation after the cross-artifact report. This record tracks design/task corrections, not implementation completion. All 121 implementation tasks remain unchecked; the constitution is unchanged.
+
+| Finding | Disposition and canonical evidence |
+| --- | --- |
+| C1 — suspended-device recording expiry | Resolved by the owner choosing the recommended option on 2026-09-25: FR-027/US6 retain hard stored server/provider deletion deadlines and explicitly define memory-only browser cleanup, expiry-before-action on resume and pre-capture suspension disclosure. T066/T076/T078/T079/T117 and Q11 verify this boundary. |
+| M1 — review-annotation migration ownership | T010 explicitly owns EvidenceReference and ReviewRequirement; Data model Dependency Validity and Corrections defines constraints and T007/T022 verify persistence, rollback and migration preservation. |
+| C2 — original-link failure path | Owner link-report/clear command, ListingLinkReport in T037, separate unknown/reported status and zero-fetch tests in T036/T041–T044; API success cannot certify or clear original-page status. |
+| A1 — restore deletion authority | Data model Restore authority and T093/T098/T101 require intact current authority, eligible registered copies, staged reconciliation and maintenance on interruption; archive-only recovery is not promised. |
+| D1 — executable RED dependency | Tasks distinguish test authorship from runnable RED; named implementation owners establish minimal structure, then record behavioral RED before adding each rule/constraint and GREEN afterward. |
+| G1 — custom checklist review | All 40 criteria have individual satisfied reviewer decisions. CHK014/026/030/039/040 were closed after the explicit C1 decision and spec/contract/task reconciliation. This is requirements quality only, not completed implementation or release evidence. |
+| U1 — material content edits | First release keeps import plus versioned quality/tag controls. Content correction uses a new import and explicit doubt on unreliable old material; no new prompt/answer editor is implied. |
+| D2 — unrelated qualification prerequisites | T109 depends on T047; T110 depends on T061/T079/T090; deployment still gates T116, and T121 joins source, visual and trial evidence. |
+| I1 — stale metadata | Active spec/plan/AGENTS status reflects existing Git/tasks; prior observations are labelled historical. |
+
+The same review filled the existing requirements' advisory-stage, applicable-question, validation and first-use-empty-state interpretations in the spec and connected them to task owners. These clarify already requested behavior and do not authorize production code. The owner-selected C1 boundary is now recorded in the authoritative specification; all nine original findings are resolved at the documentation level. Live source/provider/device/visual and human-outcome evidence remains unperformed.
+
+Document verification rerun after the owner's C1 choice: prerequisite discovery passed; all 121 IDs remain sequential and unchecked; all 35 FRs have owners excluding T121's catch-all. Dependency ordering, RED-owner reachability and declared parallel-batch file ownership passed. All 92 model quotations match the canonical data model, including the recording-lifecycle paragraph; 52 local document links and Markdown fences passed inspection. There are 30 parallel-marked tasks, 28 test-authoring tasks and 14 named migration tasks. All 40 behavior-quality criteria have satisfied reviewer decisions, with zero open items. `git diff --check` passed. Only 11 Markdown documents changed; no application scaffold or manifest exists, so no application test/build result is claimed. No extension hooks were registered. No unresolved documentation blocker remains in this analysis; implementation still requires its separate authorization and all runtime/live acceptance gates remain outstanding.

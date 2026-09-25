@@ -20,6 +20,10 @@ Django session cookie is Secure, HttpOnly, SameSite=Lax, backed by the server. E
 
 On an overlapping stale edit, validate and persist the incoming candidate before returning 409 `edit_conflict`. Response includes conflict ID, base/current/proposed revision IDs, device labels and trusted receipt times, and differing fields. Fetch details only after owner authorization. Neither conflicting fact is eligible as a unique current generation input until explicit resolution. Non-overlapping scalar edits may merge from the common base; merge never deletes completed task/answer records.
 
+### Input outcomes
+
+Apply the spec's Acceptance Interpretations and Input Boundaries identically to forms and JSON. Required manual text must contain non-whitespace content; unknown optional times/addresses are null rather than invented defaults. Empty local search filters impose no extra filter. Preserve accepted original text; normalization is only a comparison key. An empty submitted answer returns 422 and does not mark its turn answered; ending a session can retain unanswered turns. Optional before/after self-ratings accept null or integers 0–10; reject other values and never derive them from audio. New/replanned active plans reject malformed/past dates, use a default horizon only for an omitted date, accept zero weekly minutes as an explicit infeasible budget, and reject negative/non-integer budgets. Historical plans remain readable. T020 records finite operational field/body limits before dependent implementation; exceeding them returns actionable validation without partial silent acceptance.
+
 ## Endpoint Catalogue
 
 Path IDs refer to entities in the data model. All POST/PATCH/DELETE commands use the mutation envelope; expected revision applies wherever a mutable aggregate exists. List GETs use stable cursor pagination, preserving recorded item order. `limit` defaults 50 and caps at 100; malformed cursors fail explicitly.
@@ -42,6 +46,7 @@ Path IDs refer to entities in the data model. All POST/PATCH/DELETE commands use
 | GET `/api/v1/job-searches/{id}` | none | source status, local match status, listing groups, provenance and variants. |
 | GET `/api/v1/listings/{id}` | none | All observations, differing fields, source dates/links, observed availability. |
 | POST `/api/v1/listings/{id}/recheck` | selected source observation | Bounded source detail check; failure does not rewrite saved target. |
+| POST `/api/v1/listings/{id}/link-reports` | saved observation ID, expected latest report ID nullable, action report_unavailable/clear_report | Append an owner-reported original-link status with trusted time; no arbitrary URL input or network request. A stale report base returns 409. API availability and reported page availability remain separate. |
 | POST `/api/v1/targets` | direction ID OR listing observation ID OR manual JD text/source/time | Exactly one type; preserve source snapshot. Manual location unrestricted. |
 | POST `/api/v1/targets/{id}/requirements` | base revision, per-requirement confirm/edit/reject decisions | New target revision; no implicit extraction confirmation. |
 | POST `/api/v1/resume-suggestions` | confirmed target and current claim refs | Proposals with original, clauses, evidence, requirement links; unsupported clauses blocked. |
@@ -53,7 +58,7 @@ Path IDs refer to entities in the data model. All POST/PATCH/DELETE commands use
 | POST `/api/v1/plans/{id}/reorder` | base revision, unfinished task IDs, manual overrides | New order preserving completed records. |
 | POST `/api/v1/tasks/{id}/progress` | base revision, state, completion evidence | Completion event/history preserved; rerank unfinished tasks. |
 | GET/POST `/api/v1/materials` | query or manual content/type/source/date/role/topics | Source-aware questions/materials and duplicate/quality flags. No automatic web fetching. |
-| POST `/api/v1/materials/{id}/quality` | base revision, doubt/answer-source/conflict decision | Versioned quality change; source variants preserved. |
+| POST `/api/v1/materials/{id}/quality` | base revision, doubt/answer-source/conflict decision or role/topic tags | Append a quality/tag revision; source variants and original prompt/answer text remain unchanged. Substantive quality changes invalidate dependent feedback; tag-only changes do not. Reject prompt/answer edits; correction uses a new import and explicit doubt on unreliable old material. |
 | POST `/api/v1/interviews` | target/resume, mode, focus, optional pre-rating | Frozen eligible context, selected questions/source availability, session ID. |
 | GET `/api/v1/interviews/{id}` | none | Saved questions/answers, current turn, hints, review, last acknowledged progress and expired-audio states. |
 | POST `/api/v1/interviews/{id}/recordings` | turn ID | Reservation ID, immutable created_at/expires_at and accepted MIME/size limits; then browser capture may begin. |

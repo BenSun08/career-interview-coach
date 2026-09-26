@@ -1,0 +1,15 @@
+# Tool settings only. Runtime metadata and hashed dependency locks belong to T001.
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+extend-exclude = [".agents", ".codex", ".specify", ".local"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["career_helper/domain", "career_helper/application"]
+strict = true
+warn_unreachable = true
+show_error_codes = true

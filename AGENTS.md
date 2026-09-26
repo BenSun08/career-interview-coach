@@ -15,7 +15,7 @@
 ## Dependencies and checks
 
 - Prefer built-in utilities and minimal local state. Add a dependency only when an active requirement cannot be met as simply and correctly without it.
-- Build: none configured. Test: none configured. Lint: none configured. Type-check: none configured. There is no application code or package manifest yet. The proposed Django/browser toolchain and future commands are in `specs/001-career-interview-coach/quickstart.md`; they are not runnable verification today. Once implemented, add its actual canonical commands here and run the relevant checks before claiming completion.
+- Build/test: no runnable toolchain. Static Ruff/mypy settings exist in `pyproject.toml`, and browser checkJs settings exist in `jsconfig.json`; their tools, dependencies and target application folders are not installed or created by this configuration-only change. Runtime hints and `.env.example` document the planned baseline, but there is no application code, settings loader or installable dependency manifest yet. The proposed Django/browser toolchain and future commands are in `specs/001-career-interview-coach/quickstart.md`; they are not runnable verification today. T001–T005 remain incomplete. Once implemented, add its actual canonical commands here and run the relevant checks before claiming completion.
 
 ## Git and completion
 

@@ -1,0 +1,55 @@
+# Local configuration and credentials; keep the reviewed example shareable.
+.env
+.env.*
+!.env.example
+/secrets/
+
+# Python environments, bytecode, packaging and tool caches.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+/htmlcov/
+/coverage.xml
+
+# Development-only browser dependencies and generated test artifacts.
+node_modules/
+*.tsbuildinfo
+/coverage/
+/playwright-report/
+/playwright/.cache/
+/test-results/
+
+# Private runtime files must stay outside source and static assets.
+/.local/
+/data/
+/media/
+/exports/
+/backups/
+/logs/
+/staticfiles/
+/*.sqlite3
+/*.sqlite3-*
+/*.db
+/*.db-*
+
+# Machine-local editor and operating-system files.
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Keep source migrations, synthetic fixtures, lockfiles and Spec Kit tracked.

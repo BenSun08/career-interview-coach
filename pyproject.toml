@@ -26,7 +26,11 @@ select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.mypy]
 python_version = "3.12"
-files = ["career_helper/domain", "career_helper/application"]
+# Type-check the application package as it grows, including the planned
+# domain and application subpackages once their implementation tasks begin.
+# Django's bootstrap AppConfig is framework glue, outside the planned mypy scope.
+files = ["career_helper"]
+exclude = '^career_helper/apps\.py$'
 strict = true
 warn_unreachable = true
 show_error_codes = true

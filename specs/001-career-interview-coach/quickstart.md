@@ -1,61 +1,66 @@
 # Quickstart and Validation Guide
 
-**Status**: Planned commands and acceptance scenarios for implementation. The repository currently has no application/toolchain; these commands have not been run and will not work until the relevant W1–W7 work is implemented. This guide is not implementation code or an additional plan.
+**Status**: Phase 1 scaffold commands below were freshly verified on 2026-10-13 and are runnable. Application workflows, schema migrations, owner provisioning, background jobs, live qualification and human acceptance remain planned; this guide is not an additional plan. Exact setup commands and observed results are recorded in [setup evidence](./evidence/setup.md).
 
 **References**: [plan](./plan.md), [data model](./data-model.md), [API](./contracts/application-api.md), [external services](./contracts/external-services.md), [interaction lifecycle](./contracts/interaction-lifecycle.md).
 
-## Prerequisites and Future Setup
+## Verified Scaffold Setup
 
-Use Python 3.12 and Node 24 LTS on macOS/Linux. Use a separate synthetic test data directory. For actual phone microphone tests, use a trusted HTTPS origin reachable by both devices; ordinary HTTP on a LAN address does not qualify as a secure microphone context. No public deployment or live personal-data transmission is authorized by this guide alone.
+Use Python 3.12 and Node 24 on macOS/Linux. The verified environment used Python 3.12.1, Node 24.14.0 and npm 11.21.0; Python dependencies are hash-locked in `requirements-dev.lock`, and browser development dependencies are exact-version pinned in `package-lock.json`. Automated Django tests use `config.test_settings`, which creates a disposable private data root, uses a process-only synthetic secret, disables external services, and denies non-loopback DNS/socket traffic. The Playwright setup test serves synthetic content on loopback and aborts every request outside its fixture origin.
 
-From repository root, after implementation supplies these files/commands:
+From the repository root, install the locked development dependencies and browser tests:
 
 ```bash
 python3.12 -m venv .venv
 .venv/bin/python -m pip install --require-hashes -r requirements-dev.lock
 npm ci
-npx playwright install
+npm run install:browsers
+```
+
+Run the virtual-environment command only when `.venv` does not already exist. The browser installation is a one-time local setup step; it installs Chromium under the ignored `.local/playwright-browsers/` directory. `requirements.lock` contains the runtime set and `requirements-dev.lock` includes it plus development tools; both use hashes. No application owner, personal data, provider credential or live service is configured by this scaffold.
+
+## Runnable Scaffold Checks
+
+```bash
+.venv/bin/python manage.py check --settings=config.test_settings
+.venv/bin/python -m ruff check .
+.venv/bin/python -m mypy career_helper
+.venv/bin/python manage.py test --settings=config.test_settings tests.unit tests.contract tests.integration tests.migrations
+npm test
+```
+
+`npm test` runs TypeScript `checkJs`, Node browser-rule tests and a Playwright smoke test against a disposable loopback fixture server. The Python boundary tests cover controllable clocks and IDs, recorded effects, private temporary directories, two independent connections to a file-backed SQLite database, and denial of external DNS/socket targets. At this phase, only the scaffold and boundary tests run; there are no career-product flows, application models, or migration fixtures.
+
+### Optional Django Startup Probe
+
+Run this from the repository root to verify the local server startup while retaining test settings' private temporary data root and network-denial boundary:
+
+```bash
+.venv/bin/python manage.py runserver --settings=config.test_settings --noreload 127.0.0.1:8000
+```
+
+The root path returns HTTP 404 because Phase 1 has no product routes; this probe verifies server startup only. The Django development server is not production serving.
+
+## Planned Application Setup and Acceptance
+
+The following commands describe later application work and are **not implemented or validated by Phase 1**:
+
+```bash
+.venv/bin/python manage.py makemigrations --check --dry-run
+.venv/bin/python manage.py test tests.unit tests.contract tests.integration tests.migrations
+.venv/bin/python -m ruff format --check .
+.venv/bin/python -m mypy career_helper/domain career_helper/application
 .venv/bin/python manage.py migrate
 .venv/bin/python manage.py provision_owner --username owner
 .venv/bin/python manage.py seed_acceptance --profile automotive --synthetic-only
-```
-
-`requirements-dev.lock` must include the locked runtime set; both locks contain hashes. Provisioning prompts securely for the password; do not put it in CLI arguments. A sample non-secret configuration file documents data path, allowed host, owner binding, fixture mode and service settings. Development defaults bind loopback, use a separate data root and reject all real provider traffic. Production refuses fixture adapters and missing security settings for advertised live capabilities. Changing between fixture/live does not relabel old fixture data as genuine.
-
-Run web and processing in separate terminals:
-
-```bash
-.venv/bin/python manage.py runserver 127.0.0.1:8000
-```
-
-```bash
 .venv/bin/python manage.py run_jobs
-```
-
-```bash
 .venv/bin/python manage.py run_retention
-```
-
-Production uses the same code with Gunicorn behind an HTTPS reverse proxy, independently supervised job/retention commands, persistent private storage and a watchdog. `runserver` is not the production serving or retention guarantee. Host-specific service/TLS configuration is a W1/W8 deliverable and must be tested before real data is accepted.
-
-## Canonical Verification Commands to Implement
-
-```bash
-.venv/bin/python manage.py check
-.venv/bin/python manage.py makemigrations --check --dry-run
-.venv/bin/python manage.py test tests.unit tests.contract tests.integration tests.migrations
-.venv/bin/python -m ruff check .
-.venv/bin/python -m ruff format --check .
-.venv/bin/python -m mypy career_helper/domain career_helper/application
-npm run typecheck
-node --test tests/browser-unit/*.test.mjs
-npm run test:e2e
 .venv/bin/python manage.py collectstatic --noinput
 ```
 
-`npm run typecheck` invokes TypeScript with checkJs/noEmit for browser modules. `test:e2e` invokes Playwright against a disposable server/database in fixture mode, with external traffic denied. `collectstatic` validates static asset assembly; there is no separate frontend bundle build. After implementation, add the actual working commands to AGENTS.md rather than labelling these plans as configured today.
+Owner provisioning must prompt securely for the password; never put it in command-line arguments. Production requires Gunicorn behind a qualified HTTPS reverse proxy, persistent private storage, independently supervised job/retention processes and a watchdog. Runserver is not the production serving or retention guarantee. Host-specific service/TLS configuration must be tested before real data is accepted.
 
-For production-like settings and synthetic live qualification, separate from default offline tests:
+The following live qualification commands are proposed and remain unavailable until their application tasks and required access are in place. They are separate from default offline tests:
 
 ```bash
 .venv/bin/python manage.py check --deploy
@@ -64,7 +69,7 @@ For production-like settings and synthetic live qualification, separate from def
 .venv/bin/python manage.py audit_retention --verify-files
 ```
 
-These are proposed management commands. Qualification records document endpoints/model/config, source dates and actual outcomes without raw personal content or secrets. They do not install services, provision paid accounts, grant processing choice or deploy automatically. `qualify_training` must fail if configuration, permission, retention evidence or capability is missing; mocks cannot satisfy it.
+Qualification records will document endpoints/model/config, source dates and actual outcomes without raw personal content or secrets. These commands do not install services, provision paid accounts, grant processing choice or deploy automatically. `qualify_training` must fail if configuration, permission, retention evidence or capability is missing; mocks cannot satisfy it.
 
 ## Validation Scenarios
 

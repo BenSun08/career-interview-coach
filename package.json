@@ -1,0 +1,22 @@
+{
+  "name": "career-helper-browser-tests",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.14.x",
+    "npm": ">=11 <12"
+  },
+  "scripts": {
+    "typecheck": "tsc --project jsconfig.json",
+    "test:browser-unit": "node --test tests/browser-unit/*.test.mjs",
+    "install:browsers": "PLAYWRIGHT_BROWSERS_PATH=.local/playwright-browsers playwright install chromium",
+    "test:e2e": "PLAYWRIGHT_BROWSERS_PATH=.local/playwright-browsers playwright test --config=playwright.config.js",
+    "test": "npm run typecheck && npm run test:browser-unit && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}

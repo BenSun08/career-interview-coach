@@ -1,6 +1,6 @@
 # Quickstart and Validation Guide
 
-**Status**: Phase 1 scaffold commands below were verified on 2026-10-12 and are runnable. Application workflows, schema migrations, owner provisioning, background jobs, live qualification and human acceptance remain planned; this guide is not an additional plan. Exact setup commands and observed results are recorded in [setup evidence](./evidence/setup.md).
+**Status**: Phase 1 scaffold commands below were freshly verified on 2026-10-13 and are runnable. Application workflows, schema migrations, owner provisioning, background jobs, live qualification and human acceptance remain planned; this guide is not an additional plan. Exact setup commands and observed results are recorded in [setup evidence](./evidence/setup.md).
 
 **References**: [plan](./plan.md), [data model](./data-model.md), [API](./contracts/application-api.md), [external services](./contracts/external-services.md), [interaction lifecycle](./contracts/interaction-lifecycle.md).
 
@@ -31,6 +31,16 @@ npm test
 
 `npm test` runs TypeScript `checkJs`, Node browser-rule tests and a Playwright smoke test against a disposable loopback fixture server. The Python boundary tests cover controllable clocks and IDs, recorded effects, private temporary directories, two independent connections to a file-backed SQLite database, and denial of external DNS/socket targets. At this phase, only the scaffold and boundary tests run; there are no career-product flows, application models, or migration fixtures.
 
+### Optional Django Startup Probe
+
+Run this from the repository root to verify the local server startup while retaining test settings' private temporary data root and network-denial boundary:
+
+```bash
+.venv/bin/python manage.py runserver --settings=config.test_settings --noreload 127.0.0.1:8000
+```
+
+The root path returns HTTP 404 because Phase 1 has no product routes; this probe verifies server startup only. The Django development server is not production serving.
+
 ## Planned Application Setup and Acceptance
 
 The following commands describe later application work and are **not implemented or validated by Phase 1**:
@@ -43,13 +53,12 @@ The following commands describe later application work and are **not implemented
 .venv/bin/python manage.py migrate
 .venv/bin/python manage.py provision_owner --username owner
 .venv/bin/python manage.py seed_acceptance --profile automotive --synthetic-only
-.venv/bin/python manage.py runserver 127.0.0.1:8000
 .venv/bin/python manage.py run_jobs
 .venv/bin/python manage.py run_retention
 .venv/bin/python manage.py collectstatic --noinput
 ```
 
-Owner provisioning must prompt securely for the password; never put it in command-line arguments. The planned development server binds to loopback. Production requires Gunicorn behind a qualified HTTPS reverse proxy, persistent private storage, independently supervised job/retention processes and a watchdog. Runserver is not the production serving or retention guarantee. Host-specific service/TLS configuration must be tested before real data is accepted.
+Owner provisioning must prompt securely for the password; never put it in command-line arguments. Production requires Gunicorn behind a qualified HTTPS reverse proxy, persistent private storage, independently supervised job/retention processes and a watchdog. Runserver is not the production serving or retention guarantee. Host-specific service/TLS configuration must be tested before real data is accepted.
 
 The following live qualification commands are proposed and remain unavailable until their application tasks and required access are in place. They are separate from default offline tests:
 

@@ -48,7 +48,7 @@ This evidence covers only the Phase 1 scaffold and its offline boundaries. There
 
 **Initial review range before the corrective commit**: base `71b70adfaff6f85eb9bed48f0b2f66970a629b17` to PR head `74b10a41ced130c7352e86b724189ac589603002` (the full merge-base diff).
 
-The independent review found that Django 5.2 rejected `[::1]:port` even though `::1` was in the loopback allowlist. A focused contract test first failed for `[::1]:8000` while IPv4 loopback passed; replacing the configured IPv6 entry with Django's required bracketed `[::1]` made the focused test pass. The development example, test settings, and default settings now use the same value.
+The independent review found that Django 5.2 rejected `[::1]:port` even though `::1` was in the loopback allowlist. A focused contract test first failed for `[::1]:8000` while IPv4 loopback passed; replacing the configured IPv6 entry with Django's required bracketed `[::1]` made the focused test pass. The development example, test settings, and default settings now use the same value. The example no longer advertises inert bind-host/port environment variables; Django accepts the server address as a `runserver` `addrport` argument. The documented optional server probe is scaffold-only and expects HTTP 404 at `/` because product routes are not in Phase 1.
 
 ### Clean disposable setup
 
@@ -70,6 +70,7 @@ The reviewed source was extracted into a clean disposable checkout before setup.
 | `.venv/bin/python -m mypy career_helper` | Exit 0; no issues in the scaffold. |
 | `.venv/bin/python manage.py test --settings=config.test_settings tests.unit tests.contract tests.integration tests.migrations` | Exit 0; 10 tests passed, including the IPv4/IPv6 loopback and non-loopback Host checks. No tests were skipped or expected failures. |
 | `npm test` | Exit 0; TypeScript `checkJs` passed, both Node browser-rule tests passed, and the Playwright loopback fixture smoke test passed. The test asserted that a request outside the fixture origin was blocked. |
-| `.venv/bin/python manage.py runserver --settings=config.test_settings --noreload '[::1]:18765'` plus `curl --noproxy '*' -sS -o /dev/null -w 'HTTP %{http_code}\n' 'http://[::1]:18765/'` | Server started on IPv6 loopback and returned HTTP 404 for `/`, as expected because product routes are not part of Phase 1. The test settings applied successfully. Django reported its built-in auth/contenttypes/sessions migrations unapplied; no migration command is required by T001–T005, and no product migrations exist yet. |
+| `.venv/bin/python manage.py runserver --settings=config.test_settings --noreload 127.0.0.1:8000` plus `curl --noproxy '*' -sS -o /dev/null -w 'HTTP %{http_code}\n' http://127.0.0.1:8000/` | Server started on IPv4 loopback and returned HTTP 404 for `/`. |
+| `.venv/bin/python manage.py runserver --settings=config.test_settings --noreload '[::1]:18765'` plus `curl --noproxy '*' -sS -o /dev/null -w 'HTTP %{http_code}\n' 'http://[::1]:18765/'` | Server started on IPv6 loopback and returned HTTP 404 for `/`. Test settings applied successfully. Django reported built-in auth/contenttypes/sessions migrations unapplied; T001–T005 do not require migration setup, and no product migrations exist yet. |
 
 The ten Python tests cover scaffold test utilities, offline boundaries, and the new host configuration contract. They are meaningful infrastructure/configuration checks, not career-product behavioral coverage. T006 and later remain unchecked and were not started.

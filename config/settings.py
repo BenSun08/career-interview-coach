@@ -55,7 +55,7 @@ if not SECRET_KEY:
         raise ImproperlyConfigured("CAREER_HELPER_SECRET_KEY is required outside local development")
 
 ALLOWED_HOSTS = _read_list(
-    "CAREER_HELPER_ALLOWED_HOSTS", ["localhost", "127.0.0.1", "::1"]
+    "CAREER_HELPER_ALLOWED_HOSTS", ["localhost", "127.0.0.1", "[::1]"]
 )
 DATA_ROOT = _read_path("CAREER_HELPER_DATA_ROOT", ".local/dev-synthetic")
 TEST_DATA_ROOT = _read_path("CAREER_HELPER_TEST_DATA_ROOT", ".local/test")

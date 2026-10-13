@@ -43,3 +43,33 @@ Playwright requires permission to bind its synthetic server to `127.0.0.1` in th
 ## Limits
 
 This evidence covers only the Phase 1 scaffold and its offline boundaries. There are no career-product models, migrations, user workflows, owner provisioning command, job or retention workers, live provider integrations, or human acceptance results. Application setup and acceptance commands in [quickstart.md](../quickstart.md) remain marked as planned. T006 and later tasks were not started.
+
+## PR Pre-merge Verification — 2026-10-13
+
+**Initial review range before the corrective commit**: base `71b70adfaff6f85eb9bed48f0b2f66970a629b17` to PR head `74b10a41ced130c7352e86b724189ac589603002` (the full merge-base diff).
+
+The independent review found that Django 5.2 rejected `[::1]:port` even though `::1` was in the loopback allowlist. A focused contract test first failed for `[::1]:8000` while IPv4 loopback passed; replacing the configured IPv6 entry with Django's required bracketed `[::1]` made the focused test pass. The development example, test settings, and default settings now use the same value.
+
+### Clean disposable setup
+
+The reviewed source was extracted into a clean disposable checkout before setup. All commands below ran there with Python 3.12.1 / Django 5.2.18 and Node 24.14.0 / npm 11.21.0; no repository credentials, personal data, or provider services were used.
+
+| Command | Result |
+| --- | --- |
+| `python3.12 -m venv .venv` | Exit 0; created the isolated Python environment. |
+| `.venv/bin/python -m pip install --require-hashes -r requirements-dev.lock` | Exit 0; installed the locked runtime and development dependencies with hash checking. |
+| `npm ci` | Exit 0; clean lockfile install with Node 24.14.0 and npm 11.21.0. |
+| `npm run install:browsers` | Exit 0; installed the Playwright Chromium version pinned by the lockfile. |
+
+### Fresh Phase 1 checks
+
+| Command | Result |
+| --- | --- |
+| `.venv/bin/python manage.py check --settings=config.test_settings` | Exit 0; Django reported no configuration issues. |
+| `.venv/bin/python -m ruff check .` | Exit 0; all checks passed. |
+| `.venv/bin/python -m mypy career_helper` | Exit 0; no issues in the scaffold. |
+| `.venv/bin/python manage.py test --settings=config.test_settings tests.unit tests.contract tests.integration tests.migrations` | Exit 0; 10 tests passed, including the IPv4/IPv6 loopback and non-loopback Host checks. No tests were skipped or expected failures. |
+| `npm test` | Exit 0; TypeScript `checkJs` passed, both Node browser-rule tests passed, and the Playwright loopback fixture smoke test passed. The test asserted that a request outside the fixture origin was blocked. |
+| `.venv/bin/python manage.py runserver --settings=config.test_settings --noreload '[::1]:18765'` plus `curl --noproxy '*' -sS -o /dev/null -w 'HTTP %{http_code}\n' 'http://[::1]:18765/'` | Server started on IPv6 loopback and returned HTTP 404 for `/`, as expected because product routes are not part of Phase 1. The test settings applied successfully. Django reported its built-in auth/contenttypes/sessions migrations unapplied; no migration command is required by T001–T005, and no product migrations exist yet. |
+
+The ten Python tests cover scaffold test utilities, offline boundaries, and the new host configuration contract. They are meaningful infrastructure/configuration checks, not career-product behavioral coverage. T006 and later remain unchecked and were not started.

@@ -16,7 +16,7 @@ _PRIVATE_PATH.chmod(0o700)
 os.environ["CAREER_HELPER_ENV"] = "test"
 os.environ["CAREER_HELPER_DEBUG"] = "false"
 os.environ["CAREER_HELPER_SECRET_KEY"] = secrets.token_urlsafe(48)
-os.environ["CAREER_HELPER_ALLOWED_HOSTS"] = "localhost,127.0.0.1,::1"
+os.environ["CAREER_HELPER_ALLOWED_HOSTS"] = "localhost,127.0.0.1,[::1]"
 os.environ["CAREER_HELPER_DATA_ROOT"] = str(_PRIVATE_PATH / "data")
 os.environ["CAREER_HELPER_TEST_DATA_ROOT"] = str(_PRIVATE_PATH / "test-data")
 os.environ["CAREER_HELPER_FIXTURE_MODE"] = "true"
